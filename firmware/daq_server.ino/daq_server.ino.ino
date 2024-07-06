@@ -73,7 +73,6 @@ void loop()
   if (client) 
   {
     Serial.println("New client connected");
-    client.println("Hello from TCP Server");
     while (client.connected()) 
     {
       client_connected = 1;
@@ -83,36 +82,34 @@ void loop()
         adc_sample_start = 0;
         // Serial.println(adc_bytes);
          // Serial.println(( adc_bytes < 600));
-        if( adc_bytes < 600)
+        if( adc_bytes < 100)
         {
           analogValue = analogRead(ADC_12_CH);
           packet[adc_bytes] = analogValue & 0xFF;
           packet[adc_bytes+1] = (analogValue >> 8) & 0xFF;
           analogValue = analogRead(ADC_10_CH);
-          packet[adc_bytes+2] = analogValue & 0xFF;
-          packet[adc_bytes+3] = (analogValue >> 8) & 0xFF;
+          packet[adc_bytes+100] = analogValue & 0xFF;
+          packet[adc_bytes+101] = (analogValue >> 8) & 0xFF;
           analogValue = analogRead(ADC_7_CH);
-          packet[adc_bytes+4] = analogValue & 0xFF;
-          packet[adc_bytes+5] = (analogValue >> 8) & 0xFF;
+          packet[adc_bytes+200] = analogValue & 0xFF;
+          packet[adc_bytes+201] = (analogValue >> 8) & 0xFF;
           analogValue = analogRead(ADC_6_CH);
-          packet[adc_bytes+6] = analogValue & 0xFF;
-          packet[adc_bytes+7] = (analogValue >> 8) & 0xFF;
+          packet[adc_bytes+300] = analogValue & 0xFF;
+          packet[adc_bytes+301] = (analogValue >> 8) & 0xFF;
           analogValue = analogRead(ADC_0_CH);
-          packet[adc_bytes+8] = analogValue & 0xFF;
-          packet[adc_bytes+9] = (analogValue >> 8) & 0xFF;
+          packet[adc_bytes+400] = analogValue & 0xFF;
+          packet[adc_bytes+401] = (analogValue >> 8) & 0xFF;
           analogValue = analogRead(ADC_3_CH);
-          packet[adc_bytes+10] = analogValue & 0xFF;
-          packet[adc_bytes+11] = (analogValue >> 8) & 0xFF;
-          adc_bytes=adc_bytes+12;
+          packet[adc_bytes+500] = analogValue & 0xFF;
+          packet[adc_bytes+501] = (analogValue >> 8) & 0xFF;
+          adc_bytes=adc_bytes+2;
         }
-        if( adc_bytes == 600)
+        if( adc_bytes == 100)
         {
           client.write(packet, 600);
           client.flush();
           adc_bytes=0;
           Serial.println("Client.write");
-          Serial.println(adc_bytes);
-          
         }
       }
       if (client.available()) 
