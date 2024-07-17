@@ -2,8 +2,8 @@
 #include <WiFiMulti.h>
 
 #define MAX_CHANNELS  (6)
-#define ADC_12_CH     (2)
-#define ADC_10_CH     (4)
+//#define ADC_12_CH     (2)
+//#define ADC_10_CH     (4)
 #define ADC_7_CH      (35)
 #define ADC_6_CH      (34)
 #define ADC_0_CH      (36)
@@ -84,29 +84,30 @@ void loop()
          // Serial.println(( adc_bytes < 600));
         if( adc_bytes < 100)
         {
-          analogValue = analogRead(ADC_12_CH);
+          analogValue = analogRead(ADC_7_CH);
+          //Serial.println(analogValue);
           packet[adc_bytes] = analogValue & 0xFF;
           packet[adc_bytes+1] = (analogValue >> 8) & 0xFF;
-          analogValue = analogRead(ADC_10_CH);
+          analogValue = analogRead(ADC_6_CH);
           packet[adc_bytes+100] = analogValue & 0xFF;
           packet[adc_bytes+101] = (analogValue >> 8) & 0xFF;
-          analogValue = analogRead(ADC_7_CH);
+          analogValue = analogRead(ADC_0_CH);
           packet[adc_bytes+200] = analogValue & 0xFF;
           packet[adc_bytes+201] = (analogValue >> 8) & 0xFF;
-          analogValue = analogRead(ADC_6_CH);
+          analogValue = analogRead(ADC_3_CH);
           packet[adc_bytes+300] = analogValue & 0xFF;
           packet[adc_bytes+301] = (analogValue >> 8) & 0xFF;
-          analogValue = analogRead(ADC_0_CH);
-          packet[adc_bytes+400] = analogValue & 0xFF;
-          packet[adc_bytes+401] = (analogValue >> 8) & 0xFF;
-          analogValue = analogRead(ADC_3_CH);
-          packet[adc_bytes+500] = analogValue & 0xFF;
-          packet[adc_bytes+501] = (analogValue >> 8) & 0xFF;
+          //analogValue = analogRead(ADC_0_CH);
+          //packet[adc_bytes+400] = analogValue & 0xFF;
+          //packet[adc_bytes+401] = (analogValue >> 8) & 0xFF;
+          //analogValue = analogRead(ADC_3_CH);
+          //packet[adc_bytes+500] = analogValue & 0xFF;
+          //packet[adc_bytes+501] = (analogValue >> 8) & 0xFF;
           adc_bytes=adc_bytes+2;
-        }
-        if( adc_bytes == 100)
+        } 
+        if( adc_bytes >= 100)
         {
-          client.write(packet, 600);
+          client.write(packet, 400);
           client.flush();
           adc_bytes=0;
           Serial.println("Client.write");

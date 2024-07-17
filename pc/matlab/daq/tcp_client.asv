@@ -10,7 +10,7 @@ ppg =[];
 ecg =[];
 t = tcpclient("192.168.13.140",8080);
 configureCallback(t,"byte",400,@readDataFcn);
-b = fir1(96,[0.008 0.2 ]);
+b = fir1(96,[0.00 0.1 ]);
 
 function readDataFcn(src, ~)
 global ppg;
@@ -26,7 +26,7 @@ ch_1_data = src.UserData(1:100);
 ch_1_data_lsb = uint16(ch_1_data(1:2:100));
 ch_1_data_msb = (uint16(ch_1_data(2:2:100)) .* 256);
 ch_1_16_bit_data = ch_1_data_msb + ch_1_data_lsb;
-%ch_1_16_bit_data1 = filter(b,a,ch_1_16_bit_data);
+%ch_1_16_bit_data = filter(b,a,ch_1_16_bit_data);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Dynamic PPG Plot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,8 +36,6 @@ subplot(2,1,1);
 
   sppg = size(ppg);
   plot(T,ppg);
-  xlabel('Time(S)')
-  ylabel('ADC Output')
   %title ('ElectroCardiography')
   title ('Photoplethysmography')
   grid
@@ -62,8 +60,6 @@ subplot(2,1,2);
   ecg = [ecg, ch_2_16_bit_data];
   secg = size(ecg);
   plot(eT,ecg);
-  xlabel('Time(S)')
-  ylabel('ADC Output')
   %title ('Photoplethysmography')
   title ('ElectroCardiography')
   grid
