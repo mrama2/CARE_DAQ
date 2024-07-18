@@ -4,6 +4,16 @@ global T;
 global ecg;
 global eT;
 global b;
+global SAMPLE_WINDOW;
+global ppg_text;
+global ecg_text;
+global ecg_text1;
+
+ppg_text =[];
+ecg_text =[];
+ecg_text1 =[];
+SAMPLE_WINDOW = 110;
+
 T =0:0.005:(50-1)*0.005;
 eT =0:0.005:(50-1)*0.005;
 ppg =[];
@@ -18,7 +28,12 @@ global T;
 global ecg;
 global eT;
 global b;
+global SAMPLE_WINDOW;
+global ppg_text;
+global ecg_text;
+global ecg_text1;
 a =1;
+
 sampling_freq = 200;
 step = 1/sampling_freq;
 src.UserData = read(src,src.BytesAvailableFcnCount,"uint8");
@@ -31,7 +46,7 @@ ch_1_16_bit_data = ch_1_data_msb + ch_1_data_lsb;
 % Dynamic PPG Plot
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 subplot(2,1,1);
-  ppg = [ppg, ch_1_16_bit_data];
+ppg = [ppg, ch_1_16_bit_data];
 
 
   sppg = size(ppg);
@@ -41,10 +56,25 @@ subplot(2,1,1);
   %title ('ElectroCardiography')
   title ('Photoplethysmography')
   grid
-  drawnow
+  if (sppg(2)<=1000)
+    drawnow
+  end
    if (sppg(2)>1000)
       ppg = ppg(51:end);
       T = T(51:end);
+      [ppg_pks,ppg_loc]= findpeaks(double(ppg),'MinPeakDistance',SAMPLE_WINDOW);
+      Pulse_per_5sec = size(ppg_loc);
+      HR =  abs(Pulse_per_5sec(2).*12);
+      txt = ['HeartRate: ' num2str(HR) ' BPM'];
+      %delete(findall(gcf,'Tag','stream'));
+      if(isempty(ppg_text)== 0)
+          delete(ppg_text);
+      end
+      ppg_text = annotation('textbox',[.9 .7 .1 .1], ...
+      'String',txt,'EdgeColor','none');
+      drawnow;
+      % delete(ppg_text);
+      %text(T(500),4000,txt);
    end
   add_T = (T(end)+step:step:T(end)+(50*step));
    T = [T, add_T];
@@ -67,10 +97,33 @@ subplot(2,1,2);
   %title ('Photoplethysmography')
   title ('ElectroCardiography')
   grid
-  drawnow
+  if (secg(2)<=1000)
+    drawnow
+  end
    if (secg(2)>1000)
       ecg = ecg(51:end);
       eT = eT(51:end);
+      [ecg_pks,ecg_loc]= findpeaks(double(ecg),'MinPeakDistance',SAMPLE_WINDOW);
+      ePulse_per_5sec = size(ecg_loc);
+      eHR =  abs(ePulse_per_5sec(2).*12);
+      txt = ['HeartRate: ' num2str(eHR) ' BPM'];
+      %delete(findall(gcf,'Tag','stream'));
+      if(isempty(ecg_text1)== 0)
+          delete(ecg_text1);
+      end
+      if(isempty(ecg_text)== 0)
+          delete(ecg_text);
+      end
+      ecg_text1 = annotation('textbox',[.9 .2 .1 .1], ...
+      'String',txt,'EdgeColor','none');
+      %text(eT(500),4200,txt);
+      diff(ecg_loc)
+      txt = ['R-R: ' num2str((mean(diff(ecg_loc))*0.005)) ' Seconds'];
+      ecg_text = annotation('textbox',[.9 .1 .1 .1], ...
+      'String',txt,'EdgeColor','none');
+      drawnow
+      %delete(ecg_text);
+      %text(eT(500),4000,txt);
    end
  add_eT = (eT(end)+step:step:eT(end)+(50*step));
  eT = [eT, add_eT];
